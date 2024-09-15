@@ -1,7 +1,7 @@
 from flask import Flask, request, abort
-import telebot
-from config import TOKEN, CALLURL
 from bot import bot, set_webhook_with_retry
+from db import check_mongo_connection
+from config import CALLURL, CONSOLE_CHANNEL_ID
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -9,6 +9,9 @@ app = Flask(__name__)
 # Remove any existing webhook and set a new one
 bot.remove_webhook()
 set_webhook_with_retry(CALLURL)
+
+# Check MongoDB connection (now with passing the bot instance)
+check_mongo_connection(bot, CONSOLE_CHANNEL_ID)
 
 @app.route('/')
 def host():
@@ -19,7 +22,7 @@ def host():
 def receive_updates():
     if request.headers.get('content-type') == 'application/json':
         json_string = request.get_data(as_text=True)
-        update = telebot.types.Update.de_json(json_string)
+        update = bot.types.Update.de_json(json_string)
         if update is not None:
             bot.process_new_updates([update])
         return '', 200
