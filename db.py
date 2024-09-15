@@ -1,8 +1,7 @@
 from pymongo import MongoClient
 from pymongo.server_api import ServerApi
 import certifi
-from config import MONGO_URI, CONSOLE_CHANNEL_ID
-from bot import bot
+from config import MONGO_URI
 
 # Initialize MongoDB client with SSL configuration
 client = MongoClient(MONGO_URI, server_api=ServerApi('1'), tlsCAFile=certifi.where())
@@ -11,14 +10,14 @@ users_collection = db['users']
 file_storage_collection = db['file_storage']
 
 # Send a ping to confirm a successful connection
-try:
-    client.admin.command('ping')
-    bot.send_message(CONSOLE_CHANNEL_ID, "Pinged your deployment. You successfully connected to MongoDB!", parse_mode="HTML")
-except Exception as e:
-    bot.send_message(CONSOLE_CHANNEL_ID, f"Failed to connect to MongoDB: {e}", parse_mode="HTML")
+def check_mongo_connection(bot_instance, console_channel_id):
+    try:
+        client.admin.command('ping')
+        bot_instance.send_message(console_channel_id, "Pinged your deployment. You successfully connected to MongoDB!", parse_mode="HTML")
+    except Exception as e:
+        bot_instance.send_message(console_channel_id, f"Failed to connect to MongoDB: {e}", parse_mode="HTML")
 
 # Functions to interact with MongoDB collections
-
 def save_user(chat_id):
     try:
         users_collection.update_one(
