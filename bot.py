@@ -2,7 +2,7 @@ import time
 import uuid
 import telebot
 from telebot import types
-from config import TOKEN, OWNER_ID, FORCE_SUB_CHANNEL, CONSOLE_CHANNEL_ID
+from config import TOKEN, OWNER_ID, FORCE_SUB_CHANNEL
 from db import save_user, save_file_storage, load_file_storage
 
 # Initialize the bot
